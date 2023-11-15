@@ -77,5 +77,6 @@ Hannu Hakalahti, Asiantuntija TKI, Seinäjoen ammattikorkeakoulu
 * Aikataulu: 1.1.2023 - 31.12.2025
 * Hankkeen kotisivut: [https://projektit.seamk.fi/alykkaat-teknologiat/oplite/](https://projektit.seamk.fi/alykkaat-teknologiat/oplite/)
 ---
+![EU_logo](/images/Euroopan_unionin_osarahoittama_POS.png)
 ![EPLiitto](/images/EPLiitto_logo_vaaka_vari.jpg)
 ![SeAMK](/images/SEAMK_vaaka_fi_en_RGB_1200x486.jpg)
