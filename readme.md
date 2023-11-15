@@ -46,7 +46,7 @@ Alla olevassa kuvassa on esitetty FMS-solun varaston hyllypaikkojen numerointi s
 
 ### Siirtojen optimointi
 
-Sovelluksessa voidaan käyttää siirtojen optimointiin joko [pygad](https://pygad.readthedocs.io/en/latest/)-pakettia tai itse tehtyä geneettisen algoritmin toteutusta. Valinta tehdään [config.yaml](/optimizer/config.yaml)-tiedostossa asettamalla parametrille **use_pygad** arvo *True* tai *False*.
+Sovelluksessa voidaan käyttää siirtojen optimointiin joko [pygad](https://pygad.readthedocs.io/en/latest/)-pakettia tai itse tehtyä geneettisen algoritmin toteutusta. Valinta tehdään [config.yaml](/src/config.yaml)-tiedostossa asettamalla parametrille **use_pygad** arvo *True* tai *False*.
 
 Simulaatiomallissa on mahdollista suorittaa siirtojen optimointi myös ilman ulkoista sovellusta. Hyllystöhissin ominaisuuksissa on boolean-tyypin parametri **UseExternalGA**, joka määrittää käytetäänkö optimointiin ulkoista sovellusta (*True*) vai ei (*False*). Parametrin arvoa voidaan muuttaa *Property*-ikkunassa (kts. alla oleva kuva).
 
@@ -56,7 +56,7 @@ Hyllystöhissin ominaisuuksissa on myös boolean-tyypin parametri **OptimizeTran
 
 ### Sopivuusarvon laskenta
 
-Ratkaisuehdotuksen sopivuusarvon laskentaa varten simulaatiomallissa mitattiin aika, joka hyllystöhissiltä kuluu, kun se siirtää eurolavan miltä tahansa hyllypaikalta mille tahansa hyllypaikalle. Ajat on tallennettu [config.yaml](/optimizer/config.yaml)-tiedostoon (*storage* -> *transfer_times*).
+Ratkaisuehdotuksen sopivuusarvon laskentaa varten simulaatiomallissa mitattiin aika, joka hyllystöhissiltä kuluu, kun se siirtää eurolavan miltä tahansa hyllypaikalta mille tahansa hyllypaikalle. Ajat on tallennettu [config.yaml](/src/config.yaml)-tiedostoon (*storage* -> *transfer_times*).
 
 *sims*-kansiossa on myös simulaatiomalli *FastemsFMS_GA_SimulateFitness.vcmx*, jossa lavojen siirtoaikoja ei ole ennalta määritetty, vaan ne mitataan simulaation ajon aikana. Tässä mallissa optimointi tapahtuu simulaatio-ohjelman sisällä, eikä siinä ole yhteyttä ulkopuoliseen optimointisovellukseen.
 
