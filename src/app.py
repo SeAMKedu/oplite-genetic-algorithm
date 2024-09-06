@@ -90,15 +90,6 @@ def main():
 
     # Initialize the storage inventory.
     storage = utils.Storage()
-    storage.add_part(position="P03", pid=5)
-    storage.add_part(position="P04", pid=6)
-    storage.add_part(position="P05", pid=7)
-    storage.add_part(position="P06", pid=8)
-    storage.add_part(position="P07", pid=9)
-    storage.add_part(position="P16", pid=2)
-    storage.add_part(position="P17", pid=1)
-    storage.add_part(position="P18", pid=4)
-    storage.add_part(position="P19", pid=3)
 
     # TCP server socket.
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -106,24 +97,39 @@ def main():
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
     server.listen(1)
-    print(f"Server socket is running on {HOST}:{PORT}")
+    print(f"Server socket is listening on {HOST}:{PORT}")
 
-    try:
-        while True:
-            try:
-                # Receive the transfers to be optimized.
-                connection, address = server.accept()
-                print("----------------------------------------")
-                print(f"New connection from {address}")
-                connection.setblocking(False)
-                data = connection.recv(4096)
-                transfers = json.loads(data.decode())
-                # Optimize the transfers by using the genetic algorithm.
+    islistening = True
+
+    while islistening:
+        try:
+            connection, _ = server.accept()
+            connection.setblocking(False)
+
+            # Receive a message from the Visual Components.
+            print("----------------------------------------")
+            message = connection.recv(4096).decode()
+            msgdict = json.loads(message)
+            request = msgdict["request"]
+            response = {"response": "ok"}
+
+            # Use the first step of the production plan to set the
+            # initial state of the storage inventory.
+            if request == "setInventory":
+                print("Setting storage inventory...")
+                data = json.loads(msgdict["data"])
+                for value in data["0"].values():
+                    storage.add_pallet(value["src"], value["pid"])
+                print("done")
+
+            # Use the genetic algorithm (GA) to optimize the transfers.
+            elif request == "optimizeTransfers":
+                print("GA: Optimizing transfers...")
+                transfers = msgdict["data"]
                 solution = []
                 fitness = 0.0
                 num_genes = len(transfers)
                 genes = [i for i in range(num_genes)]
-                print("----------------------------------------")
                 if USE_PYGAD:
                     init_pop = utils.init_population(genes, POPULATION_SIZE)
                     ga = pygad.GA(
@@ -151,7 +157,6 @@ def main():
                         fitness_function=compute_fitness,
                     )
                     solution, fitness = ga.run()
-
                 # Show solution.
                 print(f"GA: Best fitness: {fitness}")
                 print("GA: Best solution:")
@@ -160,24 +165,24 @@ def main():
                     transfer = transfers[i]
                     solution_transfers.append(transfer)
                     print(transfer)
-
-                # Send a response.
+                # Update the storage inventory.
+                storage.set_inventory(solution_transfers)
                 response = {
                     "fitness": fitness,
                     "solution": solution_transfers,
                 }
-                data = json.dumps(response)
-                connection.sendall(data.encode())
-                # Update the storage inventory.
-                storage.set_inventory(solution_transfers)
 
-            except socket.error:
-                pass
-    except KeyboardInterrupt:
-        print("Closing the server socket...")
+            # Send a response.
+            data = json.dumps(response)
+            connection.sendall(data.encode())
+
+        except socket.error:
+            pass
+        except KeyboardInterrupt:
+            islistening = False
 
     server.close()
-
+    print("<<< Server closed >>>")
 
 if __name__ == "__main__":
     main()

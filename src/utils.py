@@ -3,28 +3,28 @@ import random
 
 
 class Storage:
-    """Class that represents the storage."""
+    """High bay rack storage."""
 
     def __init__(self) -> None:
-        self.inventory = self._initialize_inventory()
+        self.num_positions = 27
+        self.inventory = self._init_inventory()
 
-    def _initialize_inventory(self) -> dict:
+    def _init_inventory(self) -> dict:
         inventory = {}
-        position_count = 27
-        # PID = part ID, SKU = stock keeping unit.
-        position_inventory = {"pid": 0, "sku": None}
-        for position in range(1, position_count + 1):
+        # PID = pallet ID, SKU = stock keeping unit.
+        data = {"pid": 0, "sku": None}
+        for position in range(1, self.num_positions + 1):
             pos = f"P{str(position).zfill(2)}"  # P01, P02, ..., P27
-            inventory[pos] = copy.deepcopy(position_inventory)
+            inventory[pos] = copy.deepcopy(data)
         return inventory
 
-    def add_part(self, position: str, pid: int, sku: str = "epallet"):
-        """Add a part to the given position in the storage."""
+    def add_pallet(self, position: str, pid: int, sku: str = "epallet"):
+        """Add a pallet to the given position in the storage."""
         self.inventory[position]["pid"] = pid
         self.inventory[position]["sku"] = sku
 
-    def del_part(self, position: str):
-        """Delete a part from the given position in the storage."""
+    def remove_pallet(self, position: str):
+        """Remove a pallet from the given position in the storage."""
         self.inventory[position]["pid"] = 0
         self.inventory[position]["sku"] = None
 
@@ -37,10 +37,10 @@ class Storage:
         for transfer in transfers:
             src = transfer["src"]  # source position
             dst = transfer["dst"]  # destination position
-            pid = transfer["pid"]  # part ID
+            pid = transfer["pid"]  # pallet ID
             sku = transfer["sku"]  # stock keeping unit
-            self.del_part(src)
-            self.add_part(dst, pid, sku)
+            self.remove_pallet(src)
+            self.add_pallet(dst, pid, sku)
 
 
 def init_population(genes: list[int], population_size: int) -> list:
