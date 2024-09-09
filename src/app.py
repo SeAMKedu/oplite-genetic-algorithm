@@ -117,10 +117,9 @@ def main():
             # initial state of the storage inventory.
             if request == "setInventory":
                 print("Setting storage inventory...")
-                data = json.loads(msgdict["data"])
-                for value in data["0"].values():
+                for value in msgdict["data"]["0"].values():
                     storage.add_pallet(value["src"], value["pid"])
-                print("done")
+                print(">>> done")
 
             # Use the genetic algorithm (GA) to optimize the transfers.
             elif request == "optimizeTransfers":
@@ -148,13 +147,16 @@ def main():
                     fitness = 1 / fitness
                 else:
                     ga = genetic.GeneticAlgorithm(
-                        direction=genetic.MINIMUM_DIRECTION,
+                        direction=genetic.Direction.MINIMUM.value,
                         genes=genes,
                         population_size=POPULATION_SIZE,
                         num_generations=NUM_GENERATIONS,
                         elite_size=ELITE_SIZE,
                         mutation_rate=MUTATION_RATE,
                         fitness_function=compute_fitness,
+                        selection_opr=genetic.SelectionOperator.TOURNAMENT.value,
+                        crossover_opr=genetic.CrossoverOperator.PMX.value,
+                        mutation_opr=genetic.MutationType.SWAP.value,
                     )
                     solution, fitness = ga.run()
                 # Show solution.
